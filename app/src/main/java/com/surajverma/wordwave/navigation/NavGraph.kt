@@ -9,8 +9,10 @@ import androidx.navigation.compose.composable
 import com.surajverma.wordwave.screens.AddThreads
 import com.surajverma.wordwave.screens.BottomNav
 import com.surajverma.wordwave.screens.Home
+import com.surajverma.wordwave.screens.Login
 import com.surajverma.wordwave.screens.Notifications
 import com.surajverma.wordwave.screens.Profile
+import com.surajverma.wordwave.screens.Register
 import com.surajverma.wordwave.screens.Search
 import com.surajverma.wordwave.screens.Splash
 
@@ -46,6 +48,14 @@ fun NavGraph(navController: NavHostController){
 
         composable(Routes.BottomNav.routes) {
             BottomNav(navController)
+        }
+
+        composable(Routes.Login.routes) {
+            Login(navController)
+        }
+
+        composable(Routes.Register.routes) {
+            Register(navController)
         }
 
 

@@ -14,12 +14,14 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.surajverma.wordwave.R
 import com.surajverma.wordwave.navigation.Routes
 import kotlinx.coroutines.delay
 
 @Composable
-fun Splash(navController: NavHostController){
+fun Splash(navHostController: NavHostController){
     Text(text = "Splash Screen")
     
     ConstraintLayout(modifier = Modifier.fillMaxSize()
@@ -35,9 +37,25 @@ fun Splash(navController: NavHostController){
             }.size(70.dp))
     }
 
+
     LaunchedEffect(true) {
         delay(2000)
-        navController.navigate(Routes.BottomNav.routes)
+        if(FirebaseAuth.getInstance().currentUser!=null) {
+            navHostController.navigate(Routes.BottomNav.routes){
+                popUpTo(navHostController.graph.startDestinationId){
+                    inclusive=true
+                }
+                launchSingleTop=true
+            }
+        }
+        else{
+            navHostController.navigate(Routes.Login.routes){
+                popUpTo(navHostController.graph.startDestinationId){
+                    inclusive=true
+                }
+                launchSingleTop=true
+            }
+        }
     }
 
 }
