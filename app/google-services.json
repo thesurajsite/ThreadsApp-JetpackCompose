@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "656963508565",
+    "project_id": "threads-app-a0b29",
+    "storage_bucket": "threads-app-a0b29.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:656963508565:android:4d40009e8f542d0f46f7dc",
+        "android_client_info": {
+          "package_name": "com.surajverma.wordwave"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCO1qfX3sL31zd9ztgcUNf0e9VfFevCWkE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
