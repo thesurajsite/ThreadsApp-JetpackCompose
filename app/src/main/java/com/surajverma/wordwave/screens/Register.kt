@@ -1,7 +1,15 @@
 package com.surajverma.wordwave.screens
 
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,7 +29,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -30,17 +40,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import com.surajverma.wordwave.viewmodel.AuthViewModel
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
 import com.surajverma.wordwave.R
 import com.surajverma.wordwave.navigation.Routes
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,6 +82,58 @@ fun Register(navHostController: NavHostController){
         mutableStateOf("")
     }
 
+    //Creating authViewModel Instance
+    val authViewModel: AuthViewModel = viewModel()
+    val firebaseUser by authViewModel.firebaseUser.observeAsState(null)
+
+    val permissionToRequest =
+        if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.TIRAMISU){
+            android.Manifest.permission.READ_MEDIA_IMAGES
+        }
+        else{
+            android.Manifest.permission.READ_EXTERNAL_STORAGE
+        }
+
+    val context= LocalContext.current
+
+    var imageUri by remember {
+        mutableStateOf<Uri?>(null)
+    }
+
+    val launcher= rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()){
+         uri : Uri? ->
+        imageUri=uri
+
+    }
+
+    val permissionLauncher=
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()){
+
+            isGranted : Boolean ->
+
+            if(isGranted){
+
+            }else{
+
+            }
+
+        }
+
+
+    LaunchedEffect(firebaseUser) {
+        if(firebaseUser!=null){
+            navHostController.navigate(Routes.BottomNav.routes){
+                popUpTo(Routes.Register.routes){
+                    inclusive=true
+                }
+                launchSingleTop=true
+            }
+
+        }
+
+    }
+
+
     Box(modifier = Modifier
         .fillMaxSize()
         .background(Color.White)){
@@ -86,12 +154,28 @@ fun Register(navHostController: NavHostController){
 
             Box(modifier = Modifier.height(30.dp))
 
-            Image(painter = painterResource(id = R.drawable.profile_icon), contentDescription = "imagePicker",
+            Image(painter = if(imageUri===null){ painterResource(id = R.drawable.profile_icon) }
+            else{ rememberAsyncImagePainter(model = imageUri) },
+                contentDescription = "imagePicker",
                 modifier = Modifier
                     .size(100.dp)
                     .clip(CircleShape)
+                    .border(
+                        width = 2.dp,
+                        color = Color.Black,
+                        shape = CircleShape,
+                    )
+                    .padding(2.dp)
                     .clickable {
+                        val isGranted = ContextCompat.checkSelfPermission(
+                            context, permissionToRequest
+                        ) == PackageManager.PERMISSION_GRANTED
 
+                        if (isGranted) {
+                            launcher.launch("image/*")
+                        } else {
+                            permissionLauncher.launch(permissionToRequest)
+                        }
 
                     },
                 contentScale = ContentScale.Crop)
@@ -183,7 +267,14 @@ fun Register(navHostController: NavHostController){
             Box(modifier = Modifier.height(30.dp))
 
 
-            ElevatedButton(onClick = {
+            ElevatedButton(onClick =
+            {
+                if(name.isEmpty() || userName.isEmpty() || bio.isEmpty() || email.isEmpty() || password.isEmpty() || imageUri==null ){
+                    Toast.makeText(context, "Fill all Details", Toast.LENGTH_SHORT).show()
+                }
+                else{
+                    authViewModel.register(email, password, name, bio, userName, imageUri!!, context)
+                }
 
             },
                 modifier = Modifier.fillMaxWidth()) {

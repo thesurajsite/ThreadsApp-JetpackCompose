@@ -63,15 +63,16 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     //Navigation
     implementation ("androidx.navigation:navigation-compose:2.7.7")
+
     //Constraint Layout
     implementation ("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+
     //Firebase
     implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
     implementation("com.google.firebase:firebase-analytics")
@@ -79,4 +80,11 @@ dependencies {
     implementation("com.google.firebase:firebase-auth:23.0.0")
     implementation("com.google.firebase:firebase-firestore:25.0.0")
     implementation("com.google.firebase:firebase-storage:21.0.0")
+
+    //Coil
+    implementation("io.coil-kt:coil-compose:2.6.0")
+
+    // compose runtime live data dependency
+    implementation ("androidx.compose.runtime:runtime-livedata:1.6.7")
+
 }

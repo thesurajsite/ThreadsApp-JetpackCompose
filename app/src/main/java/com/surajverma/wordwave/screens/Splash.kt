@@ -39,7 +39,7 @@ fun Splash(navHostController: NavHostController){
 
 
     LaunchedEffect(true) {
-        delay(2000)
+        delay(1000)
         if(FirebaseAuth.getInstance().currentUser!=null) {
             navHostController.navigate(Routes.BottomNav.routes){
                 popUpTo(navHostController.graph.startDestinationId){
